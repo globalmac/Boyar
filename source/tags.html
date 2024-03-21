@@ -1,0 +1,15 @@
+{{define "content"}}
+
+<h1>Все тэги</h1>
+
+<ul>
+    {{range .Tags}}
+    <li>
+        <a href="{{.Slug}}.html">{{.Name}}</a>
+    </li>
+    {{end}}
+</ul>
+
+{{end}}
+
+{{template "base.html" .}}

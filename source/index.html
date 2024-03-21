@@ -1,0 +1,18 @@
+{{define "content"}}
+
+<h1>Главная страница</h1>
+
+{{ $sUrl := .Site.BaseURL }}
+{{ range .Posts }}
+<div>
+    <p>{{ .Date.Format "02.01.2006" }}</span>
+    <h3>
+        <a href="{{ .Permarlink }}">{{ .Title }}</a>
+    </h3>
+    <p>{{ safe_html .Summary }}</p>
+</div>
+{{ end }}
+
+{{end}}
+
+{{template "base.html" .}}

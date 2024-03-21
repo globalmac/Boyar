@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{.Site.BaseURL}}/css/app.css?v={{ .Site.Timestamp }}">
+
+    {{ if .IsSingular }}
+        <title>{{.Post.Title}} | {{.Site.Title}}</title>
+        <meta name="description" content="{{.Post.Description}} | {{.Site.Description}}">
+        <meta name="keywords" content="{{.Post.Keywords}} | {{.Site.Keywords}}">
+    {{ else }}
+        <title>{{.Site.Title}}</title>
+        <meta name="description" content="{{.Site.Description}}">
+        <meta name="keywords" content="{{.Site.Keywords}}">
+    {{ end }}
+
+</head>
+<body>
+<header>
+    <h1>Шаблон личного сайта</h1>
+    <p>Пример текста</p>
+</header>
+<main>
+
+    {{if eq .IsHome true}}
+
+        <h3>Блок отображается только на главной странице</h3>
+
+    {{end}}
+
+    {{template "content" .}}
+
+</main>
+</body>
+</html>

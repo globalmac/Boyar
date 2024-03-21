@@ -1,0 +1,25 @@
+baseURL: http://localhost:4444
+port: 4444
+sftp_server: host
+sftp_port: 2222
+sftp_login: login
+sftp_pass: password
+title: Название сайта
+site_name: Boyar
+keywords: Ключевые слова
+description: Описание сайта
+content_dir: content
+build_dir: build
+source_dir: source
+per_page_index: 10
+per_page_category: 10
+per_page_tag: 10
+pages: [
+    "about.html",
+    "404.html"
+]
+post_types:
+    posts: Все статьи
+    posts/2024: Статьи за 2024 год
+    news: Новости
+    news/2024: Новости за 2024 год

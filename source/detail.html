@@ -1,0 +1,33 @@
+{{define "content"}}
+
+<nav>
+    <ol>
+        <li>
+            <a href="{{.Site.BaseURL}}">Главная</a>
+        </li>
+        <li>
+            <a href="{{.Site.BaseURL}}/{{.Post.Type}}">{{post_types .Post.Type}}</a>
+        </li>
+    </ol>
+</nav>
+
+<h1>{{.Post.Title}}</h1>
+
+<p>{{ .Post.Date.Format "02.01.2006" }}</p>
+
+{{ if .Post.Tags}}
+<hr>
+<ul>
+    {{range .Post.Tags}}
+    <li><a href="/tags/{{slugify_tag .}}" class="btn btn-sm btn-outline-secondary me-2 mb-2">{{.}}</a>&nbsp</li>
+    {{end}}
+</ul>
+{{end}}
+
+{{safe_html .Post.Content}}
+
+
+
+{{end}}
+
+{{template "base.html" .}}

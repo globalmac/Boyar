@@ -1,0 +1,85 @@
+{{define "content"}}
+
+<nav>
+  <ol>
+    <li>
+      <a href="{{.Site.BaseURL}}">Главная</a>
+    </li>
+    <li>
+      <a href="{{.Site.BaseURL}}/{{.PostType}}">{{post_types .PostType}}</a>
+    </li>
+  </ol>
+</nav>
+
+<h1>
+  {{if eq .PostType "posts"}}
+    Все статьи
+  {{else}}
+    {{post_types .PostType}}
+  {{end}}
+</h1>
+
+  {{if gt .CurrentPage 1}}
+    <h3>Страница {{ .CurrentPage }} из {{ .TotalPages }}</h3>
+  {{end}}
+
+  {{ $sUrl := .Site.BaseURL }}
+  {{ range .Posts }}
+    <div>
+      {{if .Image}}
+        <img src="{{$sUrl}}/{{.Image}}"/>
+      {{end}}
+
+      {{ if .Tags}}
+        {{range .Tags}}
+          <a href="/tags/{{slugify_tag .}}">{{.}}</a>&nbsp;
+        {{end}}
+      {{end}}
+
+      <p>Дата: {{ .Date.Format "02.01.2006" }}</p>
+
+      <h3>
+        <a href="{{ .Permarlink }}"><i class="fa fa-link"></i> {{ .Title }}</a>
+      </h3>
+
+      <p>{{ safe_html .Summary }}</p>
+
+    </div>
+
+  {{ end }}
+
+  {{if gt .TotalPages 1}}
+  {{ $bUrl := .Site.BaseURL }}
+  {{ $pageUrl := .PostType }}
+  <nav>
+    <ul>
+      {{if gt .CurrentPage 1}}
+      <li><a href="{{$bUrl}}/{{$pageUrl}}/index.html">В начало</a></li>
+      {{end}}
+      {{if gt .CurrentPage 3}}
+      <li><a href="{{$bUrl}}/{{$pageUrl}}/index.html">1</a></li>
+      {{if gt .CurrentPage 4}}<li><a>...</a></li>{{end}}
+      {{end}}
+      {{range $i, $page := seq (max 2 (sub $.CurrentPage 2)) (min .TotalPages (add $.CurrentPage 2)) }}
+      <li class="{{if eq $page $.CurrentPage}}active{{end}}">
+        {{if eq $page $.CurrentPage}}
+        <span>{{$page}}</span>
+        {{else}}
+        <a href="{{$bUrl}}/{{$pageUrl}}/page/{{$page}}.html">{{$page}}</a>
+        {{end}}
+      </li>
+      {{end}}
+      {{if lt .CurrentPage (sub .TotalPages 2)}}
+      <li class="disabled"><a>...</a></li>
+      <li><a href="{{$bUrl}}/{{$pageUrl}}/page/{{ .TotalPages }}.html">{{ .TotalPages }}</a></li>
+      {{end}}
+      {{if ne .CurrentPage .TotalPages}}
+      <li><a href="{{$bUrl}}/{{$pageUrl}}/page/{{ .TotalPages }}.html">В конец</a></li>
+      {{end}}
+    </ul>
+  </nav>
+  {{end}}
+
+
+{{end}}
+{{template "base.html" .}}
