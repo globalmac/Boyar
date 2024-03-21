@@ -29,9 +29,9 @@ go get github.com/globalmac/boyar
 package main
 
 import (
-	"boyar/cmd"
 	"flag"
 	"fmt"
+	"github.com/globalmac/boyar/cmd"
 )
 
 func main() {
