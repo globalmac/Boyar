@@ -25,11 +25,11 @@ go get github.com/globalmac/boyar
 
 Перед использование нужно создать в корне проекта папку HTML-шаблона - "**source**" и папку с контентом - "**content**"
 
-```
+```go
 package main
 
 import (
-	"github.com/globalmac/boyar/cmd"
+	"boyar/cmd"
 	"flag"
 	"fmt"
 )
