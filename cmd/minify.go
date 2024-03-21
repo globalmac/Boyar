@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"boyar/core"
 	"fmt"
+	"github.com/globalmac/boyar/core"
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	minifyHtml "github.com/tdewolff/minify/v2/html"

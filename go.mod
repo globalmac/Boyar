@@ -1,4 +1,4 @@
-module boyar
+module github.com/globalmac/boyar
 
 go 1.22
 

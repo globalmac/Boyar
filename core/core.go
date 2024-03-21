@@ -1,9 +1,9 @@
 package core
 
 import (
-	"boyar/types"
 	"encoding/json"
 	"fmt"
+	"github.com/globalmac/boyar/types"
 	"html/template"
 	"io"
 	"io/fs"

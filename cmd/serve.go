@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"boyar/core"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/globalmac/boyar/core"
 	"log"
 	"net/http"
 	"os"

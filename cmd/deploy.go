@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"boyar/core"
 	"fmt"
+	"github.com/globalmac/boyar/core"
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 	"io"

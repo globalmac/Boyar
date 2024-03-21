@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"boyar/core"
 	"fmt"
+	"github.com/globalmac/boyar/core"
 	"os"
 	"text/tabwriter"
 	"time"

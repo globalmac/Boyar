@@ -1,8 +1,8 @@
 package core
 
 import (
-	"boyar/types"
 	"bytes"
+	"github.com/globalmac/boyar/types"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
