@@ -21,6 +21,12 @@
 go get github.com/globalmac/boyar
 ```
 
+или
+
+```
+go install github.com/globalmac/boyar@latest
+```
+
 ### Использование:
 
 Перед использование нужно создать в корне проекта папку HTML-шаблона - "**source**" и папку с контентом - "**content**"
