@@ -21,8 +21,8 @@ type ASTTransformer struct{}
 
 // CreateDir - создание новой директории
 func CreateDir(path string) error {
-	if _, err := os.Stat(GetPwd() + "/" + path); os.IsNotExist(err) {
-		err := os.MkdirAll(GetPwd()+"/"+path, 0755)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.MkdirAll(path, 0755)
 		if err != nil {
 			return err
 		}
@@ -35,7 +35,7 @@ func CreateDir(path string) error {
 func LoadConfig(path string) (SiteConfig, error) {
 
 	var config SiteConfig
-	configFile, err := os.ReadFile(GetPwd() + "/" + path)
+	configFile, err := os.ReadFile(path)
 	if err != nil {
 		return config, err
 	}
