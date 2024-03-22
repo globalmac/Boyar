@@ -477,7 +477,7 @@ func (core *App) CopyStaticFiles() {
 
 	for _, path := range paths {
 		dir := filepath.Dir(path)
-		destDir := strings.Replace(dir, core.SiteConfig.SourceDir+"/static", core.SiteConfig.BuildDir+"build", 1)
+		destDir := strings.Replace(dir, core.SiteConfig.SourceDir+"/static", core.SiteConfig.BuildDir, 1)
 		filename := filepath.Base(path)
 
 		err := CreateDir(destDir)
