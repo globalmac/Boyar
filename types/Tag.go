@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type Tag struct {
 	Name       string
 	Slug       string
@@ -10,6 +12,10 @@ type Tag struct {
 type Tags []Tag
 
 type TagsByName []Tag
+
+func (tag *Tag) Permalink() string {
+	return fmt.Sprintf("/tags/%s.html", tag.Slug)
+}
 
 func (tag *Tag) AddPost(post Post) []Post {
 	tag.Posts = append(tag.Posts, post)
