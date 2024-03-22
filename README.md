@@ -21,12 +21,6 @@
 go get github.com/globalmac/boyar
 ```
 
-или
-
-```
-curl https://codeload.github.com/globalmac/boyar/tar.gz/master | tar -xz --strip=2 content
-```
-
 ### Использование:
 
 Перед использование нужно создать в корне проекта папку HTML-шаблона - "**source**" и папку с контентом - "**content**"
