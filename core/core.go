@@ -61,9 +61,9 @@ func Process(cf string) *App {
 
 	return &App{
 		SiteConfig:  config,
-		ContentDir:  config.ContentPath,
-		OutputDir:   config.BuildDir,
-		TemplateDir: config.SourceDir,
+		ContentDir:  GetPwd() + "/" + config.ContentPath,
+		OutputDir:   GetPwd() + "/" + config.BuildDir,
+		TemplateDir: GetPwd() + "/" + config.SourceDir,
 	}
 }
 

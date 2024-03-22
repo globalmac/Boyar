@@ -24,7 +24,7 @@ go get github.com/globalmac/boyar
 или
 
 ```
-go install github.com/globalmac/boyar@latest
+curl https://codeload.github.com/globalmac/boyar/tar.gz/master | tar -xz --strip=2 content
 ```
 
 ### Использование:

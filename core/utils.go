@@ -35,7 +35,7 @@ func CreateDir(path string) error {
 func LoadConfig(path string) (SiteConfig, error) {
 
 	var config SiteConfig
-	configFile, err := os.ReadFile(path)
+	configFile, err := os.ReadFile(GetPwd() + "/" + path)
 	if err != nil {
 		return config, err
 	}
@@ -200,4 +200,12 @@ func removeHTMLTags(html string) string {
 	}
 
 	return result.String()
+}
+
+func GetPwd() string {
+	p, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	return p
 }

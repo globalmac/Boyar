@@ -16,7 +16,7 @@ func Serve(cf string) {
 
 	Build(cf)
 
-	config, err := core.LoadConfig("./" + cf)
+	config, err := core.LoadConfig(cf)
 	if err != nil {
 		log.Fatal(err)
 	}
