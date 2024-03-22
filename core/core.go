@@ -463,10 +463,8 @@ func (core *App) SaveAsHTML(fileName, templateName string, data map[string]inter
 func (core *App) CopyStaticFiles() {
 	var paths []string
 
-	//core.TemplateDir
-
-	fmt.Println(core.TemplateDir)
-	fmt.Println(core.OutputDir)
+	fmt.Println("-------", core.SiteConfig.SourceDir)
+	fmt.Println("-------", core.SiteConfig.BuildDir)
 
 	filepath.Walk("source/static", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
