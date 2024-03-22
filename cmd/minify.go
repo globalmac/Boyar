@@ -24,7 +24,7 @@ func MinifyFiles(cfg string) {
 		log.Fatal(err)
 	}
 
-	directory := config.BuildDir
+	directory := core.GetPwd() + "/" + config.BuildDir
 
 	if _, err := os.Stat(directory); os.IsNotExist(err) {
 		fmt.Printf("Папка назначения %s не найдена\n", directory)
