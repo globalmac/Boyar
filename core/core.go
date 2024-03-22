@@ -465,6 +465,9 @@ func (core *App) CopyStaticFiles() {
 
 	//core.TemplateDir
 
+	fmt.Println(core.TemplateDir)
+	fmt.Println(core.OutputDir)
+
 	filepath.Walk("source/static", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
