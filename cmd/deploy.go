@@ -49,7 +49,7 @@ func DeployViaSftp(cfg string) {
 		log.Fatalf("Ошибка загрузки папки на сервер: %v", err)
 	}
 
-	fmt.Println("Папка /dist успешно загружена!")
+	fmt.Println("Папка /" + localFolder + " успешно загружена!")
 }
 
 // uploadFolder - Функция для рекурсивной загрузки содержимого папки на сервер
