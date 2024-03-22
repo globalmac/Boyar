@@ -220,29 +220,34 @@ func (core *App) MakeDetailPages() {
 	sortedTags := core.Tags
 	sort.Sort(types.TagsByName(sortedTags))
 
-	for _, post := range core.Posts {
-		fileName := fmt.Sprintf("%s/%s.html", post.Type, post.Slug)
-		data := map[string]interface{}{
-			"Post":       post,
-			"IsSingular": true,
-			"Tags":       sortedTags,
-		}
-		err := core.SaveAsHTML(fileName, "detail.html", data)
-		if err != nil {
-			log.Println(err)
+	if len(sortedTags) > 0 {
+		for _, post := range core.Posts {
+			fileName := fmt.Sprintf("%s/%s.html", post.Type, post.Slug)
+			data := map[string]interface{}{
+				"Post":       post,
+				"IsSingular": true,
+				"Tags":       sortedTags,
+			}
+			err := core.SaveAsHTML(fileName, "detail.html", data)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
+
 }
 
 func (core *App) MakeTagIndexPage() {
 	sortedTags := core.Tags
 	sort.Sort(types.TagsByName(sortedTags))
 
-	err := core.SaveAsHTML("tags/index.html", "tags.html", map[string]interface{}{
-		"Tags": sortedTags,
-	})
-	if err != nil {
-		log.Println(err)
+	if len(sortedTags) > 0 {
+		err := core.SaveAsHTML("tags/index.html", "tags.html", map[string]interface{}{
+			"Tags": sortedTags,
+		})
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
@@ -255,36 +260,35 @@ func (core *App) MakeTagPages() {
 		for i, tag := range sortedTags {
 			sortedTags[i].CountPosts = len(core.Posts.FindByTag(tag.Name))
 		}
-	}
+		for _, tag := range core.Tags {
+			perPage := core.SiteConfig.PerPageTag
+			tag.Posts = core.Posts.FindByTag(tag.Name)
+			dividedPosts := DividePosts(tag.Posts, perPage, "all")
+			for pageNum, tagPosts := range dividedPosts {
 
-	for _, tag := range core.Tags {
-		perPage := core.SiteConfig.PerPageTag
-		tag.Posts = core.Posts.FindByTag(tag.Name)
-		dividedPosts := DividePosts(tag.Posts, perPage, "all")
-		for pageNum, tagPosts := range dividedPosts {
+				pp := pageNum + 1
 
-			pp := pageNum + 1
+				data := map[string]interface{}{
+					"TagPosts":    tagPosts,
+					"IsArchive":   true,
+					"CurrentPage": pp,
+					"Tag":         tag,
+					"PostTypes":   core.PostTypes,
+					"Tags":        sortedTags,
+					"TotalPages":  len(dividedPosts),
+				}
 
-			data := map[string]interface{}{
-				"TagPosts":    tagPosts,
-				"IsArchive":   true,
-				"CurrentPage": pp,
-				"Tag":         tag,
-				"PostTypes":   core.PostTypes,
-				"Tags":        sortedTags,
-				"TotalPages":  len(dividedPosts),
+				fileName := fmt.Sprintf("tags/%d/%s.html", pageNum+1, tag.Slug)
+				if pp == 1 {
+					fileName = fmt.Sprintf("tags/%s.html", tag.Slug)
+				}
+				err := core.SaveAsHTML(fileName, "tag.html", data)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 
-			fileName := fmt.Sprintf("tags/%d/%s.html", pageNum+1, tag.Slug)
-			if pp == 1 {
-				fileName = fmt.Sprintf("tags/%s.html", tag.Slug)
-			}
-			err := core.SaveAsHTML(fileName, "tag.html", data)
-			if err != nil {
-				log.Println(err)
-			}
 		}
-
 	}
 
 }
@@ -292,12 +296,15 @@ func (core *App) MakeTagPages() {
 func (core *App) MakeRSS() {
 	sortedPosts := core.Posts
 	sort.Sort(types.PostsByDate(sortedPosts))
-	data := map[string]interface{}{
-		"Posts": sortedPosts,
-		"Site":  core.SiteConfig,
-	}
 
-	rssTemplate := `
+	if len(sortedPosts) > 0 {
+
+		data := map[string]interface{}{
+			"Posts": sortedPosts,
+			"Site":  core.SiteConfig,
+		}
+
+		rssTemplate := `
 	{{ $baseURL := .Site.BaseURL }}
 	<rss version="2.0">
 	<channel>
@@ -316,17 +323,19 @@ func (core *App) MakeRSS() {
 	</rss>
 	`
 
-	t, err := template.New("").Parse(rssTemplate)
-	if err != nil {
-		log.Fatalln(err)
-	}
+		t, err := template.New("").Parse(rssTemplate)
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-	f, err := os.Create(core.OutputDir + "/rss.xml")
-	if err != nil {
-		log.Fatalln(err)
-	}
+		f, err := os.Create(core.OutputDir + "/rss.xml")
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-	t.Execute(f, data)
+		t.Execute(f, data)
+
+	}
 }
 
 func (core *App) MakeSearchJson() {
@@ -334,75 +343,83 @@ func (core *App) MakeSearchJson() {
 	sortedPosts := core.Posts
 	sort.Sort(types.PostsByDate(sortedPosts))
 
-	type SearchBlock struct {
-		Url   string `json:"k"`
-		Title string `json:"v"`
-	}
-	var data []SearchBlock
 	if len(sortedPosts) > 0 {
-		for _, post := range sortedPosts {
-			data = append(data, SearchBlock{
-				post.Title, core.SiteConfig.BaseURL + post.Permarlink(),
-			})
+
+		type SearchBlock struct {
+			Url   string `json:"k"`
+			Title string `json:"v"`
 		}
-		if len(data) > 0 {
-			f, _ := os.Create(core.OutputDir + "/search.json")
-			defer f.Close()
-			jsonContent, _ := json.Marshal(data)
-			f.Write(jsonContent)
+		var data []SearchBlock
+		if len(sortedPosts) > 0 {
+			for _, post := range sortedPosts {
+				data = append(data, SearchBlock{
+					post.Title, core.SiteConfig.BaseURL + post.Permarlink(),
+				})
+			}
+			if len(data) > 0 {
+				f, _ := os.Create(core.OutputDir + "/search.json")
+				defer f.Close()
+				jsonContent, _ := json.Marshal(data)
+				f.Write(jsonContent)
+			}
 		}
+
 	}
 
 }
 
 func (core *App) MakePostCategories() {
 
-	for _, postType := range core.PostTypes {
+	if len(core.PostTypes) > 0 {
 
-		var posts types.Posts
+		for _, postType := range core.PostTypes {
 
-		for _, post := range core.Posts {
-			if post.Type == postType {
-				posts = append(posts, post)
-			} else if strings.HasPrefix(post.Type, postType) {
-				posts = append(posts, post)
-			}
-		}
+			var posts types.Posts
 
-		perPage := core.SiteConfig.PerPageCategory
-		dividedPosts := DividePosts(posts, perPage, postType)
-
-		sortedTags := core.Tags
-		sort.Sort(types.TagsByName(sortedTags))
-
-		if len(sortedTags) > 0 {
-			for i, tag := range sortedTags {
-				sortedTags[i].CountPosts = len(core.Posts.FindByTag(tag.Name))
-			}
-		}
-
-		for pageNum, pagePosts := range dividedPosts {
-
-			pp := pageNum + 1
-
-			data := map[string]interface{}{
-				"Posts":       pagePosts,
-				"PostType":    postType,
-				"PostTypes":   core.PostTypes,
-				"Tags":        sortedTags,
-				"PerPage":     perPage,
-				"CurrentPage": pp,
-				"TotalPages":  len(dividedPosts),
+			for _, post := range core.Posts {
+				if post.Type == postType {
+					posts = append(posts, post)
+				} else if strings.HasPrefix(post.Type, postType) {
+					posts = append(posts, post)
+				}
 			}
 
-			fileName := fmt.Sprintf("%s/page/%d.html", postType, pageNum+1)
-			if pp == 1 {
-				fileName = fmt.Sprintf("%s/index.html", postType)
+			perPage := core.SiteConfig.PerPageCategory
+			dividedPosts := DividePosts(posts, perPage, postType)
+
+			sortedTags := core.Tags
+			sort.Sort(types.TagsByName(sortedTags))
+
+			if len(sortedTags) > 0 {
+				for i, tag := range sortedTags {
+					sortedTags[i].CountPosts = len(core.Posts.FindByTag(tag.Name))
+				}
 			}
 
-			err := core.SaveAsHTML(fileName, "posts.html", data)
-			if err != nil {
-				log.Println(err)
+			for pageNum, pagePosts := range dividedPosts {
+
+				pp := pageNum + 1
+
+				data := map[string]interface{}{
+					"Posts":       pagePosts,
+					"PostType":    postType,
+					"PostTypes":   core.PostTypes,
+					"Tags":        sortedTags,
+					"PerPage":     perPage,
+					"CurrentPage": pp,
+					"TotalPages":  len(dividedPosts),
+				}
+
+				fileName := fmt.Sprintf("%s/page/%d.html", postType, pageNum+1)
+				if pp == 1 {
+					fileName = fmt.Sprintf("%s/index.html", postType)
+				}
+
+				err := core.SaveAsHTML(fileName, "posts.html", data)
+				if err != nil {
+					log.Println(err)
+				}
+
 			}
 
 		}
@@ -414,12 +431,15 @@ func (core *App) MakePostCategories() {
 func (core *App) MakeSiteMap() {
 	sortedPosts := core.Posts
 	sort.Sort(types.PostsByDate(sortedPosts))
-	data := map[string]interface{}{
-		"Posts": sortedPosts,
-		"Site":  core.SiteConfig,
-	}
 
-	sitemapTemplate := strings.TrimSpace(`
+	if len(sortedPosts) > 0 {
+
+		data := map[string]interface{}{
+			"Posts": sortedPosts,
+			"Site":  core.SiteConfig,
+		}
+
+		sitemapTemplate := strings.TrimSpace(`
 	{{ $baseURL := .Site.BaseURL }}
 	<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 	<channel>
@@ -435,17 +455,20 @@ func (core *App) MakeSiteMap() {
 	</urlset>
 	`)
 
-	t, err := template.New("").Parse(sitemapTemplate)
-	if err != nil {
-		log.Fatalln(err)
+		t, err := template.New("").Parse(sitemapTemplate)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		f, err := os.Create(core.OutputDir + "/sitemap.xml")
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		t.Execute(f, data)
+
 	}
 
-	f, err := os.Create(core.OutputDir + "/sitemap.xml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	t.Execute(f, data)
 }
 
 func (core *App) SaveAsHTML(fileName, templateName string, data map[string]interface{}) error {
@@ -494,33 +517,38 @@ func (core *App) CopyStaticFiles() {
 		return nil
 	})
 
-	for _, path := range paths {
-		dir := filepath.Dir(path)
-		destDir := strings.Replace(dir, core.SiteConfig.SourceDir+"/static", core.SiteConfig.BuildDir, 1)
-		filename := filepath.Base(path)
+	if len(paths) > 0 {
 
-		err := CreateDir(destDir)
-		if err != nil {
-			log.Println(err)
+		for _, path := range paths {
+			dir := filepath.Dir(path)
+			destDir := strings.Replace(dir, core.SiteConfig.SourceDir+"/static", core.SiteConfig.BuildDir, 1)
+			filename := filepath.Base(path)
+
+			err := CreateDir(destDir)
+			if err != nil {
+				log.Println(err)
+			}
+
+			srcFile, err := os.Open(path)
+			if err != nil {
+				log.Println(err)
+			}
+			defer srcFile.Close()
+
+			destFile, err := os.Create(destDir + "/" + filename)
+			if err != nil {
+				log.Println(err)
+			}
+			defer destFile.Close()
+
+			_, err = io.Copy(destFile, srcFile)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 
-		srcFile, err := os.Open(path)
-		if err != nil {
-			log.Println(err)
-		}
-		defer srcFile.Close()
-
-		destFile, err := os.Create(destDir + "/" + filename)
-		if err != nil {
-			log.Println(err)
-		}
-		defer destFile.Close()
-
-		_, err = io.Copy(destFile, srcFile)
-		if err != nil {
-			log.Println(err)
-		}
 	}
+
 }
 
 func compileTemplate(templateName string, core *App) *template.Template {
