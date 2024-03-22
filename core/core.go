@@ -174,26 +174,45 @@ func (core *App) MakeIndexPage() {
 	perPage := core.SiteConfig.PerPageIndex
 	dividedPosts := DividePosts(sortedPosts, perPage, "all")
 
-	for pageNum, pagePosts := range dividedPosts {
+	if len(dividedPosts) > 0 {
+		for pageNum, pagePosts := range dividedPosts {
 
-		pp := pageNum + 1
+			pp := pageNum + 1
+
+			data := map[string]interface{}{
+				"Posts":       pagePosts,
+				"IsHome":      true,
+				"CurrentPage": pp,
+				"TotalPages":  len(dividedPosts),
+			}
+
+			fileName := fmt.Sprintf("/%d.html", pageNum+1)
+			if pp == 1 {
+				fileName = fmt.Sprintf("index.html")
+			}
+			err := core.SaveAsHTML(fileName, "index.html", data)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
+	} else {
 
 		data := map[string]interface{}{
-			"Posts":       pagePosts,
+			"Posts":       sortedPosts,
 			"IsHome":      true,
-			"CurrentPage": pp,
+			"CurrentPage": 0,
 			"TotalPages":  len(dividedPosts),
 		}
 
-		fileName := fmt.Sprintf("/%d.html", pageNum+1)
-		if pp == 1 {
-			fileName = fmt.Sprintf("index.html")
-		}
+		fileName := fmt.Sprintf("index.html")
 		err := core.SaveAsHTML(fileName, "index.html", data)
 		if err != nil {
 			log.Println(err)
 		}
+
 	}
+
 }
 
 func (core *App) MakeDetailPages() {
