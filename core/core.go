@@ -472,7 +472,6 @@ func (core *App) MakeSiteMap() {
 }
 
 func (core *App) MakeRobotsTxt() {
-
 	data := map[string]interface{}{
 		"Url": core.SiteConfig.BaseURL,
 	}
