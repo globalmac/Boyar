@@ -474,13 +474,13 @@ func (core *App) MakeSiteMap() {
 func (core *App) MakeRobotsTxt() {
 
 	data := map[string]interface{}{
-		"Site": core.SiteConfig,
+		"Url": core.SiteConfig.BaseURL,
 	}
 
 	sitemapTemplate := strings.TrimSpace(`User-agent: *
 Disallow:
 
-Sitemap: {{ $baseURL }}/sitemap.xml
+Sitemap: {{ .Url }}/sitemap.xml
 	`)
 
 	t, err := template.New("").Parse(sitemapTemplate)
