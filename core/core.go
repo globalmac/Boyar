@@ -444,12 +444,10 @@ func (core *App) MakeSiteMap() {
 	<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 	<channel>
 		{{ range .Posts }}
-		{{ if eq .Type "posts"}}
 		<url>
 			<loc>{{ $baseURL }}{{ .Permarlink }}</loc>
 			<lastmod>{{ .Date.Format "2006-01-02T15:04:05" }}</lastmod>
 		</url>
-		{{ end }}
 		{{ end }}
 	</channel>
 	</urlset>
