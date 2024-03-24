@@ -479,8 +479,7 @@ func (core *App) MakeRobotsTxt() {
 	sitemapTemplate := strings.TrimSpace(`User-agent: *
 Disallow:
 
-Sitemap: {{ .Url }}/sitemap.xml
-	`)
+Sitemap: {{ .Url }}/sitemap.xml`)
 
 	t, err := template.New("").Parse(sitemapTemplate)
 	if err != nil {
