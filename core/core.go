@@ -471,6 +471,32 @@ func (core *App) MakeSiteMap() {
 
 }
 
+func (core *App) MakeRobotsTxt() {
+
+	data := map[string]interface{}{
+		"Site": core.SiteConfig,
+	}
+
+	sitemapTemplate := strings.TrimSpace(`User-agent: *
+Disallow:
+
+Sitemap: {{ $baseURL }}/sitemap.xml
+	`)
+
+	t, err := template.New("").Parse(sitemapTemplate)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	f, err := os.Create(core.OutputDir + "/robots.txt")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	t.Execute(f, data)
+
+}
+
 func (core *App) SaveAsHTML(fileName, templateName string, data map[string]interface{}) error {
 	tpl := compileTemplate(templateName, core)
 

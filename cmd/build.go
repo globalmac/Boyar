@@ -21,6 +21,7 @@ func Build(cnf string) {
 	c.MakeTagPages()
 	c.MakeRSS()
 	c.MakeSiteMap()
+	c.MakeRobotsTxt()
 	c.MakeSearchJson()
 	c.MakePostCategories()
 	c.CopyStaticFiles()
