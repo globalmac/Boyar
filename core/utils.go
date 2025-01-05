@@ -114,7 +114,7 @@ func markdownParser(content string) (types.MarkdownPost, string) {
 
 	if fmd.Tags != nil {
 		for i, tag := range fmd.Tags {
-			fmd.Tags[i] = strings.TrimSpace(tag)
+			fmd.Tags[i] = slugify(strings.TrimSpace(tag))
 		}
 	}
 
